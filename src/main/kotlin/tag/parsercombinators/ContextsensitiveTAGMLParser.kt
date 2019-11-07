@@ -1,25 +1,7 @@
 package tag.parsercombinators
 
-import lambdada.parsec.io.Reader
 import lambdada.parsec.parser.*
-
-/*
- * Attempt to create a context sensitive TAGML parser.
- * We need the basic open and close tags
- * Note that these are in package scope
- */
-val openTagParser: Parser<Char, String> = char('[') thenRight charIn(CharRange('a', 'z')).rep thenLeft char('>') map {
-    String(it.toCharArray())
-}
-
-fun expectedCloseTagParser(expected: String): Parser<Char, String> = char('<') thenRight string(expected) thenLeft char(']')
-
-val anyOpenTagFollowedByTheExactSameCloseTagParser: Parser<Char, String> = {
-    when (val result = openTagParser(it)) {
-        is Response.Accept -> expectedCloseTagParser(result.value)(result.input)
-        is Response.Reject -> result
-    }
-}
+import lambdada.parsec.io.Reader
 
 // legacy parsers
 val anyCloseTagParser: Parser<Char, String> = char('<') thenRight charIn(CharRange('a', 'z')).rep thenLeft char(']') map {
